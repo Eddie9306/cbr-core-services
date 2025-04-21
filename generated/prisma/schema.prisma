@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tenants {
+  tenantId     Int      @id @default(autoincrement())
+  companyName  String   @unique
+  phoneNumber  String
+  address      String
+  employees    Int
+  Users        users[]
+  creationDate DateTime @default(now())
+}
+
+model documentTypes {
+  documentTypeId Int      @id @default(autoincrement())
+  name           String
+  code           String?
+  Users          users[]
+  creationDate   DateTime @default(now())
+}
+
+model users {
+  userId            Int            @id @default(autoincrement())
+  documentNumber    String
+  firstName         String
+  lastName          String?
+  email             String
+  phoneNumber       String?
+  password          String
+  activated         Boolean        @default(true)
+  tenant            tenants        @relation(fields: [tenantId], references: [tenantId])
+  tenantId          Int
+  documentType      documentTypes  @relation(fields: [documentTypeId], references: [documentTypeId])
+  documentTypeId    Int
+  wageRate          Decimal
+  grossCompensation Decimal
+  netCompensation   Decimal
+  creationDate      DateTime       @default(now())
+  bankAccounts      bankAccounts[]
+}
+
+model bankAccountTypes {
+  bankAccountTypeId Int            @id @default(autoincrement())
+  name              String
+  creationDate      DateTime       @default(now())
+  bankAccounts      bankAccounts[]
+}
+
+model banks {
+  bankId       Int            @id @default(autoincrement())
+  code         String
+  name         String
+  creationDate DateTime       @default(now())
+  bankAccounts bankAccounts[]
+}
+
+model bankAccounts {
+  bankAccountId     Int              @id @default(autoincrement())
+  number            String
+  bankAccountType   bankAccountTypes @relation(fields: [bankAccountTypeId], references: [bankAccountTypeId])
+  bankAccountTypeId Int
+  creationDate      DateTime         @default(now())
+  user              users            @relation(fields: [userId], references: [userId])
+  userId            Int
+  bank              banks            @relation(fields: [bankId], references: [bankId])
+  bankId            Int
+  transactions      transactions[]
+}
+
+model transactionStatus {
+  transactionStatusId Int            @id @default(autoincrement())
+  name                String
+  creationDate        DateTime       @default(now())
+  transactions        transactions[]
+}
+
+model currencies {
+  currencyId   Int            @id @default(autoincrement())
+  name         String
+  creationDate DateTime       @default(now())
+  transactions transactions[]
+}
+
+model accounts {
+  // the main
+  accountId    Int            @id @default(autoincrement())
+  name         String
+  token        String
+  privateKey   String
+  creationDate DateTime       @default(now())
+  transactions transactions[]
+}
+
+model transactions {
+  transactionId       Int               @id @default(autoincrement())
+  account             accounts          @relation(fields: [accountId], references: [accountId])
+  accountId           Int
+  requestedAmount     Decimal
+  currency            currencies        @relation(fields: [currencyId], references: [currencyId])
+  currencyId          Int
+  bankAccount         bankAccounts      @relation(fields: [bankAccountId], references: [bankAccountId])
+  bankAccountId       Int
+  transactionStatus   transactionStatus @relation(fields: [transactionStatusId], references: [transactionStatusId])
+  transactionStatusId Int
+}
