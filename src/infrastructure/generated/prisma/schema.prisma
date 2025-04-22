@@ -15,13 +15,14 @@ datasource db {
 }
 
 model tenants {
-  tenantId     Int      @id @default(autoincrement())
-  companyName  String   @unique
-  phoneNumber  String
-  address      String
-  employees    Int
-  Users        users[]
-  creationDate DateTime @default(now())
+  tenantId      Int             @id @default(autoincrement())
+  companyName   String          @unique
+  phoneNumber   String
+  address       String
+  employees     Int
+  Users         users[]
+  payrollCycles payrollCycles[]
+  creationDate  DateTime        @default(now())
 }
 
 model documentTypes {
@@ -50,6 +51,7 @@ model users {
   netCompensation   Decimal
   creationDate      DateTime       @default(now())
   bankAccounts      bankAccounts[]
+  workRecords       workRecords[]
 }
 
 model bankAccountTypes {
@@ -94,14 +96,46 @@ model currencies {
   transactions transactions[]
 }
 
+// the main account
 model accounts {
-  // the main
   accountId    Int            @id @default(autoincrement())
   name         String
   token        String
   privateKey   String
   creationDate DateTime       @default(now())
   transactions transactions[]
+}
+
+model payrollCycleStatus {
+  payrollCycleStatusId Int      @id @default(autoincrement())
+  name                 String
+  creationDate         DateTime @default(now())
+}
+
+model payrollCycles {
+  payrollCycleId    Int            @id @default(autoincrement())
+  tenant            tenants        @relation(fields: [tenantId], references: [tenantId])
+  tenantId          Int
+  initDate          DateTime
+  endDate           DateTime
+  totalGrossEarning Decimal
+  totalNetEarning   Decimal
+  transactions      transactions[]
+  transactionId     Int
+  workRecords       workRecords[]
+}
+
+model workRecords {
+  workRecordId     Int           @id @default(autoincrement())
+  payrollCycle     payrollCycles @relation(fields: [payrollCycleId], references: [payrollCycleId])
+  payrollCycleId   Int
+  user             users         @relation(fields: [userId], references: [userId])
+  userId           Int
+  startTime        DateTime?
+  endTime          DateTime?
+  totalHoursWorked Decimal
+  grossEarning     Decimal
+  netEarning       Decimal
 }
 
 model transactions {
@@ -115,4 +149,7 @@ model transactions {
   bankAccountId       Int
   transactionStatus   transactionStatus @relation(fields: [transactionStatusId], references: [transactionStatusId])
   transactionStatusId Int
+  creationDate        DateTime          @default(now())
+  payrollCycle        payrollCycles     @relation(fields: [payrollCycleId], references: [payrollCycleId])
+  payrollCycleId      Int
 }

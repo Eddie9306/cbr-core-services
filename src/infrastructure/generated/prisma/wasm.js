@@ -192,13 +192,42 @@ exports.Prisma.AccountsScalarFieldEnum = {
   creationDate: 'creationDate'
 };
 
+exports.Prisma.PayrollCycleStatusScalarFieldEnum = {
+  payrollCycleStatusId: 'payrollCycleStatusId',
+  name: 'name',
+  creationDate: 'creationDate'
+};
+
+exports.Prisma.PayrollCyclesScalarFieldEnum = {
+  payrollCycleId: 'payrollCycleId',
+  tenantId: 'tenantId',
+  initDate: 'initDate',
+  endDate: 'endDate',
+  totalGrossEarning: 'totalGrossEarning',
+  totalNetEarning: 'totalNetEarning',
+  transactionId: 'transactionId'
+};
+
+exports.Prisma.WorkRecordsScalarFieldEnum = {
+  workRecordId: 'workRecordId',
+  payrollCycleId: 'payrollCycleId',
+  userId: 'userId',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  totalHoursWorked: 'totalHoursWorked',
+  grossEarning: 'grossEarning',
+  netEarning: 'netEarning'
+};
+
 exports.Prisma.TransactionsScalarFieldEnum = {
   transactionId: 'transactionId',
   accountId: 'accountId',
   requestedAmount: 'requestedAmount',
   currencyId: 'currencyId',
   bankAccountId: 'bankAccountId',
-  transactionStatusId: 'transactionStatusId'
+  transactionStatusId: 'transactionStatusId',
+  creationDate: 'creationDate',
+  payrollCycleId: 'payrollCycleId'
 };
 
 exports.Prisma.SortOrder = {
@@ -258,6 +287,10 @@ exports.Prisma.accountsOrderByRelevanceFieldEnum = {
   privateKey: 'privateKey'
 };
 
+exports.Prisma.payrollCycleStatusOrderByRelevanceFieldEnum = {
+  name: 'name'
+};
+
 
 exports.Prisma.ModelName = {
   tenants: 'tenants',
@@ -269,6 +302,9 @@ exports.Prisma.ModelName = {
   transactionStatus: 'transactionStatus',
   currencies: 'currencies',
   accounts: 'accounts',
+  payrollCycleStatus: 'payrollCycleStatus',
+  payrollCycles: 'payrollCycles',
+  workRecords: 'workRecords',
   transactions: 'transactions'
 };
 
