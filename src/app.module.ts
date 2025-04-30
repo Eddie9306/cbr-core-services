@@ -1,10 +1,29 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './application/controllers/app.controller';
-import { AppService } from './domain/app.service';
+import { TenantController } from './application/controllers/tenant.controller';
+import {
+  TenantRepositoryInterface,
+  TenantRepository,
+} from './infrastructure/repositories';
+import { PrismaClient } from '@prisma/client';
+import { TenantServiceInterface, TenantService } from './domain';
+import { LoggerModule } from './infrastructure/logger/logger.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [LoggerModule],
+  controllers: [TenantController],
+  providers: [
+    {
+      provide: PrismaClient,
+      useValue: new PrismaClient(),
+    },
+    {
+      provide: 'TenantRepositoryInterface',
+      useClass: TenantRepository,
+    }, // services
+    {
+      provide: 'TenantServiceInterface',
+      useClass: TenantService,
+    },
+  ],
 })
 export class AppModule {}

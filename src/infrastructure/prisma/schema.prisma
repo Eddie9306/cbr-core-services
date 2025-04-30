@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../../../node_modules/.prisma/client"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -14,142 +15,169 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model tenants {
-  tenantId      Int             @id @default(autoincrement())
-  companyName   String          @unique
+model Tenant {
+  tenantId      Int            @id @default(autoincrement())
+  companyId     String         @unique
+  companyName   String         @unique
   phoneNumber   String
-  address       String
+  address       String?
   employees     Int
-  Users         users[]
-  payrollCycles payrollCycles[]
-  creationDate  DateTime        @default(now())
+  users         User[]
+  payrollCycles PayrollCycle[]
+  creationDate  DateTime       @default(now())
+
+  @@map("tenants")
 }
 
-model documentTypes {
+model DocumentType {
   documentTypeId Int      @id @default(autoincrement())
   name           String
   code           String?
-  Users          users[]
+  users          User[]
   creationDate   DateTime @default(now())
+
+  @@map("documentTypes")
 }
 
-model users {
-  userId            Int            @id @default(autoincrement())
+model User {
+  userId            Int           @id @default(autoincrement())
   documentNumber    String
   firstName         String
   lastName          String?
   email             String
   phoneNumber       String?
   password          String
-  activated         Boolean        @default(true)
-  tenant            tenants        @relation(fields: [tenantId], references: [tenantId])
+  activated         Boolean       @default(true)
+  tenant            Tenant        @relation(fields: [tenantId], references: [tenantId])
   tenantId          Int
-  documentType      documentTypes  @relation(fields: [documentTypeId], references: [documentTypeId])
+  documentType      DocumentType  @relation(fields: [documentTypeId], references: [documentTypeId])
   documentTypeId    Int
   wageRate          Decimal
   grossCompensation Decimal
   netCompensation   Decimal
-  creationDate      DateTime       @default(now())
-  bankAccounts      bankAccounts[]
-  workRecords       workRecords[]
+  creationDate      DateTime      @default(now())
+  bankAccounts      BankAccount[]
+  workRecords       WorkRecord[]
+
+  @@map("users")
 }
 
-model bankAccountTypes {
-  bankAccountTypeId Int            @id @default(autoincrement())
+model BankAccountType {
+  bankAccountTypeId Int           @id @default(autoincrement())
   name              String
-  creationDate      DateTime       @default(now())
-  bankAccounts      bankAccounts[]
+  creationDate      DateTime      @default(now())
+  bankAccounts      BankAccount[]
+
+  @@map("bankAccountTypes")
 }
 
-model banks {
-  bankId       Int            @id @default(autoincrement())
+model Banks {
+  bankId       Int           @id @default(autoincrement())
   code         String
   name         String
-  creationDate DateTime       @default(now())
-  bankAccounts bankAccounts[]
+  creationDate DateTime      @default(now())
+  bankAccounts BankAccount[]
+
+  @@map("banks")
 }
 
-model bankAccounts {
-  bankAccountId     Int              @id @default(autoincrement())
+model BankAccount {
+  bankAccountId     Int             @id @default(autoincrement())
   number            String
-  bankAccountType   bankAccountTypes @relation(fields: [bankAccountTypeId], references: [bankAccountTypeId])
+  bankAccountType   BankAccountType @relation(fields: [bankAccountTypeId], references: [bankAccountTypeId])
   bankAccountTypeId Int
-  creationDate      DateTime         @default(now())
-  user              users            @relation(fields: [userId], references: [userId])
+  creationDate      DateTime        @default(now())
+  user              User            @relation(fields: [userId], references: [userId])
   userId            Int
-  bank              banks            @relation(fields: [bankId], references: [bankId])
+  bank              Banks           @relation(fields: [bankId], references: [bankId])
   bankId            Int
-  transactions      transactions[]
+  transactions      Transaction[]
+
+  @@map("bankAccounts")
 }
 
-model transactionStatus {
-  transactionStatusId Int            @id @default(autoincrement())
+model TransactionStatus {
+  transactionStatusId Int           @id @default(autoincrement())
   name                String
-  creationDate        DateTime       @default(now())
-  transactions        transactions[]
+  creationDate        DateTime      @default(now())
+  transactions        Transaction[]
+
+  @@map("transactionStatus")
 }
 
-model currencies {
-  currencyId   Int            @id @default(autoincrement())
+model Currency {
+  currencyId   Int           @id @default(autoincrement())
   name         String
-  creationDate DateTime       @default(now())
-  transactions transactions[]
+  creationDate DateTime      @default(now())
+  transactions Transaction[]
+
+  @@map("currencies")
 }
 
 // the main account
-model accounts {
-  accountId    Int            @id @default(autoincrement())
+model Account {
+  accountId    Int           @id @default(autoincrement())
   name         String
   token        String
   privateKey   String
-  creationDate DateTime       @default(now())
-  transactions transactions[]
+  creationDate DateTime      @default(now())
+  transactions Transaction[]
+
+  @@map("accounts")
 }
 
-model payrollCycleStatus {
+model PayrollCycleStatus {
   payrollCycleStatusId Int      @id @default(autoincrement())
   name                 String
   creationDate         DateTime @default(now())
+
+  @@map("payrollCycleStatus")
 }
 
-model payrollCycles {
-  payrollCycleId    Int            @id @default(autoincrement())
-  tenant            tenants        @relation(fields: [tenantId], references: [tenantId])
+model PayrollCycle {
+  payrollCycleId    Int           @id @default(autoincrement())
+  tenant            Tenant        @relation(fields: [tenantId], references: [tenantId])
   tenantId          Int
   initDate          DateTime
   endDate           DateTime
   totalGrossEarning Decimal
   totalNetEarning   Decimal
-  transactions      transactions[]
+  transactions      Transaction[]
   transactionId     Int
-  workRecords       workRecords[]
+  workRecords       WorkRecord[]
+
+  @@map("payrollCycles")
 }
 
-model workRecords {
-  workRecordId     Int           @id @default(autoincrement())
-  payrollCycle     payrollCycles @relation(fields: [payrollCycleId], references: [payrollCycleId])
+model WorkRecord {
+  workRecordId     Int          @id @default(autoincrement())
+  payrollCycle     PayrollCycle @relation(fields: [payrollCycleId], references: [payrollCycleId])
   payrollCycleId   Int
-  user             users         @relation(fields: [userId], references: [userId])
+  user             User         @relation(fields: [userId], references: [userId])
   userId           Int
   startTime        DateTime?
   endTime          DateTime?
   totalHoursWorked Decimal
   grossEarning     Decimal
   netEarning       Decimal
+
+  @@map("workRecords")
 }
 
-model transactions {
+model Transaction {
   transactionId       Int               @id @default(autoincrement())
-  account             accounts          @relation(fields: [accountId], references: [accountId])
+  account             Account           @relation(fields: [accountId], references: [accountId])
   accountId           Int
   requestedAmount     Decimal
-  currency            currencies        @relation(fields: [currencyId], references: [currencyId])
+  currency            Currency          @relation(fields: [currencyId], references: [currencyId])
   currencyId          Int
-  bankAccount         bankAccounts      @relation(fields: [bankAccountId], references: [bankAccountId])
+  bankAccount         BankAccount       @relation(fields: [bankAccountId], references: [bankAccountId])
   bankAccountId       Int
-  transactionStatus   transactionStatus @relation(fields: [transactionStatusId], references: [transactionStatusId])
+  transactionStatus   TransactionStatus @relation(fields: [transactionStatusId], references: [transactionStatusId])
   transactionStatusId Int
   creationDate        DateTime          @default(now())
-  payrollCycle        payrollCycles     @relation(fields: [payrollCycleId], references: [payrollCycleId])
+  payrollCycle        PayrollCycle      @relation(fields: [payrollCycleId], references: [payrollCycleId])
   payrollCycleId      Int
+
+  @@map("transactions")
 }
