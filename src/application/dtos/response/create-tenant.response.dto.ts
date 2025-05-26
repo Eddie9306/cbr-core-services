@@ -5,10 +5,10 @@ export class CreateTenantResponseDto {
   tenantId: number;
 
   @ApiProperty({ type: String })
-  companyId: string;
+  nationalId: string;
 
   @ApiProperty({ type: String })
-  companyName: string;
+  name: string;
 
   @ApiProperty({ type: String })
   phoneNumber: string;

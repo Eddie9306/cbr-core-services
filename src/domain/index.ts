@@ -1,2 +1,2 @@
-export * from './services/tenant/tenant.service.interface'
-export * from './services/tenant/tenant.service'
+export * from './services/tenant.service';
+export * from './services/cognito.service';

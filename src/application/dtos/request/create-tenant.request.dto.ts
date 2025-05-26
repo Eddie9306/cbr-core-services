@@ -4,11 +4,11 @@ import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 export class CreateTenantRequestDto {
   @ApiProperty({ type: String })
   @IsNotEmpty()
-  companyId: string;
+  nationalId: string;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()
-  companyName: string;
+  name: string;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()

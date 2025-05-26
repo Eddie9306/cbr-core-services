@@ -1,9 +1,8 @@
 import { PinoLogger } from 'nestjs-pino';
 import { Injectable } from '@nestjs/common';
-import { LoggerInterface } from './logger.interface';
 
 @Injectable()
-export class BasicLogger extends PinoLogger implements LoggerInterface {
+export class LoggerService extends PinoLogger {
   private currentContext = '';
 
   setContext(value: string) {

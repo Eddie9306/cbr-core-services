@@ -1,2 +1,1 @@
-export * from './tenant/tenant.repository'
-export * from './tenant/tenant.repository.interface'
+export * from './tenant/tenant.repository';

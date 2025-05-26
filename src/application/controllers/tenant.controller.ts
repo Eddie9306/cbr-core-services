@@ -1,18 +1,14 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { TenantServiceInterface } from '../../domain';
+import { TenantService } from '../../domain';
 import { CreateTenantRequestDto } from '../dtos/request';
 import { ApiBadRequestResponse, ApiCreatedResponse } from '@nestjs/swagger';
-import { LoggerInterface } from '../../infrastructure/logger/logger.interface';
 import { CreateTenantResponseDto } from '../dtos/response/create-tenant.response.dto';
 
 @Controller('tenants')
 export class TenantController {
   constructor(
-    @Inject('TenantServiceInterface')
-    private readonly tenantService: TenantServiceInterface,
-    @Inject('LoggerInterface')
-    private readonly logger: LoggerInterface,
-  ) {}
+    private readonly tenantService: TenantService,
+  ) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -25,7 +21,6 @@ export class TenantController {
   async createTenant(
     @Body() createTenantDto: CreateTenantRequestDto,
   ): Promise<CreateTenantResponseDto> {
-    this.logger.info(createTenantDto, 'TenantController.createTenant');
     return await this.tenantService.create(createTenantDto);
   }
 }

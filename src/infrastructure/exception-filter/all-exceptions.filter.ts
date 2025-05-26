@@ -9,11 +9,11 @@ import {
 import { Response } from 'express';
 import { DomainError } from './domain.error';
 import { InfrastructureError } from './infrastructure.error';
-import { LoggerInterface } from '../logger/logger.interface';
+import { LoggerService } from '../logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly logger: LoggerInterface) {}
+  constructor(private readonly logger: LoggerService) { }
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -29,7 +29,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       logLevel = 'warn';
     } else if (exception instanceof InfrastructureError) {
       status = HttpStatus.SERVICE_UNAVAILABLE;
-      clientMessage = 'Service temporarily unavailable, please try again';
+      clientMessage = exception.message;
       logLevel = 'error';
     } else if (exception instanceof BadRequestException) {
       const response = exception.getResponse();

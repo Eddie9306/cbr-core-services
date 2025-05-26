@@ -1,7 +1,7 @@
 export class Tenant {
   tenantId: number;
-  companyId: string;
-  companyName: string;
+  nationalId: string;
+  name: string;
   phoneNumber: string;
   address?: string;
   employees: number;

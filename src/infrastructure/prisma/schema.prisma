@@ -17,8 +17,8 @@ datasource db {
 
 model Tenant {
   tenantId      Int            @id @default(autoincrement())
-  companyId     String         @unique
-  companyName   String         @unique
+  nationalId    String         @unique
+  name          String
   phoneNumber   String
   address       String?
   employees     Int
